@@ -8,6 +8,7 @@ app.use(cors());
 
 const lists = [
     { type: 'person', year: 0, uri: 'rtb' },
+    { type: 'person', year: 0, uri: 'rtrl' },
 ];
 
 async function request(location) {
@@ -50,18 +51,36 @@ function parse(response) {
    return response.data
 }
 
-async function run() {
+async function runRt() {
+    const process = request(locate(lists[0]))
+        .then(parse)
+        .catch(error => {console.log("error: " + error)});
+    return process;
+    /*
     const processes = lists.map(list => {
         const process = request(locate(list))
             .then(parse)
             .catch(error => {console.log("error")});
         return process;
     });
-    return await Promise.all(processes);
+    return await Promise.all(process);
+    */
+}
+
+async function runRtAm() {
+    const process = request(locate(lists[1]))
+        .then(parse)
+        .catch(error => {console.log("error: " + error)});
+    return process;
 }
 
 app.get('/real-time', async (req, res) => {
-    const data = await run();
+    const data = await runRt();
+    res.json(data);
+});
+
+app.get('/real-time-america', async (req, res) => {
+    const data = await runRtAm();
     res.json(data);
 });
 
