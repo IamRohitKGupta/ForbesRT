@@ -31,6 +31,14 @@ function locate(item) {
     };
 }
 
+function locateHeavy(item) {
+    return {
+        url: process.env.FORBES_URL_HEAVY,
+        params: item,
+        passthrough: item
+    };
+}
+
 function parse(response) {
     /*
     return response.data.map(item => {
@@ -74,6 +82,13 @@ async function runRtAm() {
     return process;
 }
 
+async function runRtHeavy() {
+    const process = request(locateHeavy(lists[0]))
+        .then(parse)
+        .catch(error => {console.log("error: " + error)});
+    return process;
+}
+
 app.get('/real-time', async (req, res) => {
     const data = await runRt();
     res.json(data);
@@ -81,6 +96,11 @@ app.get('/real-time', async (req, res) => {
 
 app.get('/real-time-america', async (req, res) => {
     const data = await runRtAm();
+    res.json(data);
+});
+
+app.get('/real-time-full', async (req, res) => {
+    const data = await runRtHeavy();
     res.json(data);
 });
 
