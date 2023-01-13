@@ -31,12 +31,19 @@ function locate(item) {
     };
 }
 
-function locateHeavy(item) {
-    return {
-        url: process.env.FORBES_URL_HEAVY,
-        params: item,
-        passthrough: item
-    };
+function locateHeavy(limit) {
+    if (limit > 0 && limit <= 500) {
+        return {
+            url: process.env.FORBES_URL_HEAVY + '?limit=' + limit,
+            //params: item,
+            //passthrough: item
+        };
+    } else {
+        return {
+            url: process.env.FORBES_URL_HEAVY
+        };
+    }
+    
 }
 
 function parse(response) {
@@ -82,8 +89,8 @@ async function runRtAm() {
     return process;
 }
 
-async function runRtHeavy() {
-    const process = request(locateHeavy(lists[0]))
+async function runRtHeavy(limit) {
+    const process = request(locateHeavy(limit))
         .then(parse)
         .catch(error => {console.log("error: " + error)});
     return process;
@@ -100,7 +107,7 @@ app.get('/real-time-america', async (req, res) => {
 });
 
 app.get('/real-time-full', async (req, res) => {
-    const data = await runRtHeavy();
+    const data = await runRtHeavy(req.query.limit);
     res.json(data);
 });
 
